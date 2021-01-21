@@ -14,7 +14,6 @@ services:
 
   client:
     image: library/node:14.15-alpine
-    user: node
     working_dir: /home/node/app
     ports:
       - 3000:3000
@@ -25,7 +24,6 @@ services:
 
   server:
     image: library/node:14.15-alpine
-    user: node
     working_dir: /home/node/app
     volumes:
       - ./server:/home/node/app
