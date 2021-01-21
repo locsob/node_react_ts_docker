@@ -10,7 +10,7 @@ interface BaseSuccessResponse<T extends object> {
     data: T
 }
 
-type BaseResponse<T> = BaseSuccessResponse<any> | BaseErrorResponse;
+export type BaseResponse<T> = BaseSuccessResponse<any> | BaseErrorResponse;
 
 
 export const get = async <T extends object>(path: string): Promise<BaseResponse<T>> => {

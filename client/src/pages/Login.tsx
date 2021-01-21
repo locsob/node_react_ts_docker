@@ -1,6 +1,7 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useContext, useState} from 'react';
 import Header from "../components/Header";
 import {post} from "../utils/http-client";
+import {UserContext} from "../context/user";
 
 interface OwnProps {}
 
@@ -21,6 +22,8 @@ const Login: FC<Props> = () => {
         email: '',
         password: ''
     });
+
+    const {login} = useContext(UserContext);
 
     const {email, password, disabled} = formState;
 
@@ -48,6 +51,10 @@ const Login: FC<Props> = () => {
 
         try {
             const response = await post<boolean>('login', data);
+
+            if (response.success && response.data) {
+                login(email)
+            }
         } catch (e) {
             console.log(e.message);
         }

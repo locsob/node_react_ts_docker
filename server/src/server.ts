@@ -28,16 +28,12 @@ initDb().then(
 
         passport.serializeUser(function(user, done) {
             const appUser = user as User;
-            console.log('ser', appUser);
             done(null, appUser.id.value);
         });
 
         passport.deserializeUser(async function(id, done) {
-            console.log('des', id);
-
             const user = await findUserById({value: id as string})
 
-            console.log(user);
             if (user) {
                 return done(false, user)
             }

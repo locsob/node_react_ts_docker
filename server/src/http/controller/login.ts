@@ -1,7 +1,6 @@
 import {RequestHandler} from "express";
 import {BaseResponse} from "../types";
 import {login, LoginCommand} from "../../use-case/login";
-import passport from "passport";
 
 export const loginAction: RequestHandler<unknown, BaseResponse<boolean>, LoginCommand> = async (req, res) => {
     const command = req.body;
@@ -13,8 +12,6 @@ export const loginAction: RequestHandler<unknown, BaseResponse<boolean>, LoginCo
         data: result,
     }
 
-    // @ts-ignore
-    // res.session = { cookie: req.session.cookie }
-    // res.cookie('userid', result.id.value)
+    res.cookie('loggedInEmail', req.user.email)
     res.json(resp);
 }
