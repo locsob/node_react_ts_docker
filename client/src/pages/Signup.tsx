@@ -1,58 +1,28 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useContext, useState} from 'react';
 import Header from "../components/Header";
-import {serverAddress} from "../utils/server";
 import {post} from "../utils/http-client";
+import {useCredentialsForm} from "../hook/credentials-form";
+import {UserContext} from "../context/user";
 
 interface OwnProps {}
 
 type Props = OwnProps;
 
-interface FormData {
-    email: string,
-    password: string,
-}
-
-interface FormState extends FormData {
-    disabled: boolean
-}
 
 const Signup: FC<Props> = ({}) => {
-    const [formState, setFormState] = useState<FormState>({
-        disabled: true,
-        email: '',
-        password: ''
-    });
-
-    const {email, password, disabled} = formState;
-
-    const changeValue = (key: keyof FormData, value: string) => {
-        const anotherKey = key === 'email' ? 'password' : 'email';
-        const anotherValue = formState[anotherKey];
-
-        setFormState({
-            ...formState,
-            [key]: value,
-            disabled: value.length === 0 || anotherValue.length === 0
-        });
-    };
-
     const signupRequest = async () => {
-        setFormState({
-            ...formState,
-            disabled: true
-        });
-
-        const data: FormData = {
-            email,
-            password
-        };
-
         try {
-            const response = await post<boolean>('signup', data);
+            const response = await post<boolean>('signup', {email, password});
         } catch (e) {
             console.log(e.message);
         }
     }
+
+    const {formData, changeValue} = useCredentialsForm({
+        sendData: signupRequest
+    });
+
+    const {email, password, disabled} = formData;
 
     return (
       <div>

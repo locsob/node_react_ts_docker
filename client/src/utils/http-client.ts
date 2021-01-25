@@ -39,6 +39,22 @@ export const post = async <T>(path: string, bodyData: object): Promise<BaseRespo
     return data;
 }
 
+export const appFetch = async <T>(
+    path: string,
+    method: RequestInit['method'],
+    requestInit: RequestInit|undefined = undefined,
+): Promise<BaseResponse<T>> => {
+    const response = await fetch(getUrl(path), {
+        credentials: 'include',
+        ...requestInit,
+        method: method,
+    });
+
+    const data = await response.json() as undefined as BaseResponse<T>;
+
+    return data;
+}
+
 const getUrl = (path: string): string => {
     return `${serverAddress}/${path}`;
 }

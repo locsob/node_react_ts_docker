@@ -2,55 +2,17 @@ import React, {FC, useContext, useState} from 'react';
 import Header from "../components/Header";
 import {post} from "../utils/http-client";
 import {UserContext} from "../context/user";
+import {Redirect} from 'react-router-dom';
+import {useCredentialsForm} from "../hook/credentials-form";
 
 interface OwnProps {}
 
 type Props = OwnProps;
 
-interface FormData {
-    email: string,
-    password: string,
-}
-
-interface FormState extends FormData {
-    disabled: boolean
-}
-
 const Login: FC<Props> = () => {
-    const [formState, setFormState] = useState<FormState>({
-        disabled: true,
-        email: '',
-        password: ''
-    });
-
-    const {login} = useContext(UserContext);
-
-    const {email, password, disabled} = formState;
-
-    const changeValue = (key: keyof FormData, value: string) => {
-        const anotherKey = key === 'email' ? 'password' : 'email';
-        const anotherValue = formState[anotherKey];
-
-        setFormState({
-            ...formState,
-            [key]: value,
-            disabled: value.length === 0 || anotherValue.length === 0
-        });
-    };
-
     const loginRequest = async () => {
-        setFormState({
-            ...formState,
-            disabled: true
-        });
-
-        const data: FormData = {
-            email,
-            password
-        };
-
         try {
-            const response = await post<boolean>('login', data);
+            const response = await post<boolean>('login', {email, password});
 
             if (response.success && response.data) {
                 login(email)
@@ -58,6 +20,19 @@ const Login: FC<Props> = () => {
         } catch (e) {
             console.log(e.message);
         }
+    }
+
+
+    const {login, isLoggedIn} = useContext(UserContext);
+    const {formData, changeValue} = useCredentialsForm({
+        sendData: loginRequest
+    });
+
+    const {email, password, disabled} = formData;
+
+
+    if (isLoggedIn) {
+        return <Redirect to="/" />
     }
 
     return <div>
@@ -88,5 +63,7 @@ const Login: FC<Props> = () => {
         </div>
     </div>
 };
+
+
 
 export default Login;
